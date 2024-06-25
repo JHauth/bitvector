@@ -32,4 +32,5 @@ gtest_discover_tests(hello_test)
 add_executable(
         main
         src/main.cpp
+        src/bitvector.cpp
 )
