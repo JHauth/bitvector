@@ -12,7 +12,7 @@
 int main(int argc, char* argv[]) {
     // Check for valid input
     if ( argc < 3) {
-        printf("Fatal: Not enough arguments!");
+        std::cerr << "Usage: " << argv[0] << " <inputFilename> <outputFilename>" << std::endl;
         return 1;
     }
 
