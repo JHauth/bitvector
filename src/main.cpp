@@ -2,7 +2,6 @@
 #include <fstream>
 #include <string>
 #include <chrono>
-#include <stdexcept>
 #include <sstream>
 
 #include "bitvector.hpp"
@@ -25,12 +24,12 @@ int main(int argc, char* argv[]) {
     // Check if the file was opened successfully
     if (!input.is_open()) {
         std::cerr << "Failed to open the file: " << inputFile << std::endl;
-        return 1; // Exit with an error code
+        return 1;
     }
 
     if (!output.is_open()) {
         std::cerr << "Failed to open the file: " << outputFile << std::endl;
-        return 1; // Exit with an error code
+        return 1;
     }
 
     // Init vars
