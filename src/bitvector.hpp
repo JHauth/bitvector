@@ -12,25 +12,25 @@ public:
     explicit Bitvector(std::string bits);
 
     /**
-     * Access the bit a specific position
-     * @param pos The position to access
-     * @return The bit at pos as bool
+     * Access the bit a specific index
+     * @param i The index to access
+     * @return The bit at index as bool
      */
-    bool access(size_t pos);
+    bool access(size_t i);
 
     /**
-     * Get the position with i zeros or ones before
+     * Get the index with n zeros or ones before
      * @param bit What bit to track
-     * @param i Amount of bits before position
-     * @return The position where i bits are before
+     * @param n Amount of bits before position
+     * @return The index where n bits are before
      */
-    size_t select(bool bit, size_t i);
+    size_t select(bool bit, size_t n);
 
     /**
-     * Get the number of bits bit before position i
+     * Get the number of bits bit before index i
      * @param bit What bit to track
-     * @param i The position to begin tracking
-     * @return Number of bits of type bit before the position i
+     * @param i The index to begin tracking
+     * @return Number of bits of type bit before the index i
      */
     size_t rank(bool bit, size_t i);
 
