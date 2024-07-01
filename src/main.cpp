@@ -37,7 +37,6 @@ int main(int argc, char* argv[]) {
     std::string cmdOut;
     std::string fileOut;
     size_t numCommands = 0;
-    size_t sizeInBits = 0;
     size_t res = 0;
 
     std::chrono::time_point<std::chrono::high_resolution_clock> start, end;
@@ -90,7 +89,7 @@ int main(int argc, char* argv[]) {
         }
 
         // Output result
-        printf("%zu name=%s time=%f space=%zu\n", res, NAME, timeInMS.count(), sizeInBits);
+        printf("%zu name=%s time=%f space=%zu\n", res, NAME, timeInMS.count(), bitvector.getSize());
         output << res << std::endl;
     }
 
