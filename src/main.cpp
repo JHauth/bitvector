@@ -7,6 +7,8 @@
 
 #include "bitvector.hpp"
 
+#define NAME "joshua_hauth"
+
 int main(int argc, char* argv[]) {
     // Check for valid input
     if ( argc < 3) {
@@ -18,10 +20,16 @@ int main(int argc, char* argv[]) {
     std::string outputFile = argv[2];
 
     std::ifstream input(inputFile);
+    std::ofstream output(outputFile);
 
     // Check if the file was opened successfully
     if (!input.is_open()) {
         std::cerr << "Failed to open the file: " << inputFile << std::endl;
+        return 1; // Exit with an error code
+    }
+
+    if (!output.is_open()) {
+        std::cerr << "Failed to open the file: " << outputFile << std::endl;
         return 1; // Exit with an error code
     }
 
@@ -53,21 +61,28 @@ int main(int argc, char* argv[]) {
         if (command == "access") {
             size_t index;
             iss >> index;
-            std::cout << "access called with index: " << index << std::endl;
-            bitvector.access(index);
+            res = bitvector.access(index);
         } else if (command == "rank") {
             size_t type, index;
             iss >> type >> index;
-            std::cout << "rank called with type: " << type << " and index: " << index << std::endl;
-            bitvector.rank(type, index);
+            res = bitvector.rank(type, index);
         } else if (command == "select") {
             size_t type, index;
             iss >> type >> index;
-            std::cout << "select called with type: " << type << " and index: " << index << std::endl;
-            bitvector.select(type, index);
+            res = bitvector.select(type, index);
         } else {
             std::cerr << "Unknown command: " << command << std::endl;
         }
+
+        // Output result
+        printf("%zu name=%s time=%zu space=%zu\n", res, NAME, timeInMS, sizeInBits);
+        output << res << std::endl;
     }
+
+    // Cleanup
+    input.close();
+    output.close();
+
+    return 0;
 }
 
