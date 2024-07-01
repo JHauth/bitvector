@@ -71,6 +71,8 @@ int main(int argc, char* argv[]) {
             res = bitvector.select(type, index);
         } else {
             std::cerr << "Unknown command: " << command << std::endl;
+            output << "NaN" << std::endl;
+            continue;
         }
 
         // Output result
