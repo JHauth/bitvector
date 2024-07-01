@@ -34,6 +34,12 @@ public:
      */
     size_t rank(bool bit, size_t i);
 
+    /**
+     * Returns the size of the class
+     * @return size in bits
+     */
+    size_t getSize();
+
 private:
     std::vector<uint64_t> bitvector;
 };

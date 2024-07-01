@@ -14,3 +14,7 @@ size_t Bitvector::rank(bool bit, size_t i) {
 size_t Bitvector::select(bool bit, size_t i) {
     return 0;
 }
+
+size_t Bitvector::getSize() {
+    return sizeof(*this) * 8;
+}
