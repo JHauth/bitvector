@@ -38,8 +38,10 @@ int main(int argc, char* argv[]) {
     std::string fileOut;
     size_t numCommands = 0;
     size_t sizeInBits = 0;
-    size_t timeInMS = 0;
     size_t res = 0;
+
+    std::chrono::time_point<std::chrono::high_resolution_clock> start, end;
+    std::chrono::duration<double, std::milli> timeInMS{};
 
     // Get number of commands
     input >> numCommands;
@@ -60,15 +62,27 @@ int main(int argc, char* argv[]) {
         if (command == "access") {
             size_t index;
             iss >> index;
+
+            start = std::chrono::high_resolution_clock::now();
             res = bitvector.access(index);
+            end = std::chrono::high_resolution_clock::now();
+            timeInMS = end - start;
         } else if (command == "rank") {
             size_t type, index;
             iss >> type >> index;
+
+            start = std::chrono::high_resolution_clock::now();
             res = bitvector.rank(type, index);
+            end = std::chrono::high_resolution_clock::now();
+            timeInMS = end - start;
         } else if (command == "select") {
             size_t type, index;
             iss >> type >> index;
+
+            start = std::chrono::high_resolution_clock::now();
             res = bitvector.select(type, index);
+            end = std::chrono::high_resolution_clock::now();
+            timeInMS = end - start;
         } else {
             std::cerr << "Unknown command: " << command << std::endl;
             output << "NaN" << std::endl;
@@ -76,7 +90,7 @@ int main(int argc, char* argv[]) {
         }
 
         // Output result
-        printf("%zu name=%s time=%zu space=%zu\n", res, NAME, timeInMS, sizeInBits);
+        printf("%zu name=%s time=%f space=%zu\n", res, NAME, timeInMS.count(), sizeInBits);
         output << res << std::endl;
     }
 
