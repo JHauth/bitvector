@@ -7,12 +7,19 @@
 #include <string>
 
 class Bitvector {
-
+private:
+    /**
+      * Get the number of one bits bit before index i
+      * @param i The index to begin tracking
+      * @return Number of bits of type bit before the index i
+      */
+    size_t rankOnes(size_t i);
 public:
     explicit Bitvector(std::string bits);
 
     /**
-     * Access the bit a specific index
+     * Access the bit a specific index.
+     * Undefined behaviour for out-of-range access
      * @param i The index to access
      * @return The bit at index as bool
      */
@@ -41,7 +48,12 @@ public:
     size_t getSize();
 
 private:
-    std::vector<uint64_t> bitvector;
+    std::vector<uint64_t> bitvector;       //< Holds bits
+    size_t size;                           //< Number of bits in bitvector
+    size_t rankBlockSize;                  //< Size of one block
+    std::vector<size_t> rankBlocks;        //< Block for rank
+    size_t rankSuperblockSize;             //< Size of one superblock
+    std::vector<size_t> rankSuperblocks;   //< Superblock for rank
 };
 
 
