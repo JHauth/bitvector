@@ -151,6 +151,9 @@ TEST(Access, LargePatterns) {
     }
 }
 
+/**
+ * Tests the bitvector for sizes where the block size is 0.
+ */
 TEST(Rank, SmallBitvector) {
     Bitvector bv("1");
     EXPECT_EQ(bv.rank(1,0), 0);
@@ -170,3 +173,28 @@ TEST(Rank, SmallBitvector) {
     EXPECT_EQ(bv3.rank(1,2), 2);
     EXPECT_EQ(bv3.rank(0,2), 0);
 }
+
+/**
+ * Verifies the scenario where the index i is the first position of a block.
+ * The rank calculation should only include the superblock and block values,
+ * without needing a lookup.
+ */
+TEST(Rank, BlockOnly) {}
+
+/**
+ * Tests the rank method when the index i is within a block,
+ * and the block is inside a single uint64_t element of the bitvector.
+ */
+TEST(Rank, BlockWithin64) {}
+
+/**
+ * Verifies the rank method when the index i is within a block that
+ * spans across two uint64_t elements of the bitvector.
+ */
+TEST(Rank, BlockBetween64) {}
+
+/**
+ * Ensures that the rank method handles the case where the index i is in the last,
+ * partially filled block of the bitvector.
+ */
+TEST(Rank, EndBlock) {}
