@@ -1,6 +1,7 @@
 #include "bitvector.hpp"
 #include <cmath>
 #include <bitset>
+#include <algorithm>
 
 uint8_t countOneBits(size_t n) {
     uint8_t count = 0;
@@ -14,7 +15,7 @@ uint8_t countOneBits(size_t n) {
 Bitvector::Bitvector(std::string bits)
 : bitvector(bits.size() / 64 + (bits.size() % 64 == 0 ? 0 :  1)),
   size(bits.size()),
-  rankBlockSize(floor(log2(bits.size())/2)),
+  rankBlockSize(std::max(floor(log2(bits.size())/2), 1.0)), //< type warnings not really important here. Expected to be below 64
   rankSuperblockSize(rankBlockSize * rankBlockSize),
   rankSuperblocks(bits.size() / rankSuperblockSize + (bits.size() / rankSuperblockSize == 0 ? 0 : 1)),
   rankBlocks(bits.size() / rankBlockSize + (bits.size() / rankBlockSize == 0 ? 0 : 1)),
