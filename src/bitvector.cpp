@@ -1,13 +1,23 @@
 #include "bitvector.hpp"
 #include <cmath>
 
+uint8_t countOneBits(size_t n) {
+    uint8_t count = 0;
+    while (n) {
+        n &= (n - 1);
+        count++;
+    }
+    return count;
+}
+
 Bitvector::Bitvector(std::string bits)
 : bitvector(bits.size() / 64 + (bits.size() % 64 == 0 ? 0 :  1)),
   size(bits.size()),
   rankBlockSize(floor(log2(bits.size())/2)),
   rankSuperblockSize(rankBlockSize * rankBlockSize),
   rankSuperblocks(bits.size() / rankSuperblockSize + (bits.size() / rankSuperblockSize == 0 ? 0 : 1)),
-  rankBlocks(bits.size() / rankBlockSize + (bits.size() / rankBlockSize == 0 ? 0 : 1)) {
+  rankBlocks(bits.size() / rankBlockSize + (bits.size() / rankBlockSize == 0 ? 0 : 1)),
+  rankLookup(2 << rankBlockSize) {
     // Fill bitvector uin64 from right to left
     for(size_t i = 0; i < bits.size(); i += 64) {
         uint64_t chunk = 0;
@@ -47,6 +57,16 @@ Bitvector::Bitvector(std::string bits)
             }
         }
     }
+
+    // Populate rank lookup table
+    /**
+     * This can be precomputed. On a 64-bit system only support blocks up to 64 bits length.
+     * So in a block there are max 64 ones. Use uint8_t which supports up to 63 bits.
+     * If there are really 63 bits we don't need to store it, because it will be stored in block
+     */
+    for (size_t i = 0; i < rankLookup.size(); ++i) {
+        rankLookup[i] = countOneBits(i);
+    }
 }
 
 bool Bitvector::access(size_t i) {
@@ -55,10 +75,14 @@ bool Bitvector::access(size_t i) {
     return bit;
 }
 
+size_t Bitvector::blockLookupOnes(size_t i) {
+    return 0;
+}
+
 size_t Bitvector::rankOnes(size_t i) {
     auto superblock = i / rankSuperblockSize;
     auto block = i / rankBlockSize;
-    auto res = rankSuperblocks[superblock] + rankBlocks[block]; // + lookup
+    auto res = rankSuperblocks[superblock] + rankBlocks[block] + blockLookupOnes(i); // + lookup
     return res;
 }
 

@@ -14,6 +14,13 @@ private:
       * @return Number of bits of type bit before the index i
       */
     size_t rankOnes(size_t i);
+
+    /**
+     * Get the number of ones in a block via lookup table
+     * @param i Index in bitvector
+     * @return Number of ones in block at position
+     */
+    size_t blockLookupOnes(size_t i);
 public:
     explicit Bitvector(std::string bits);
 
@@ -54,6 +61,7 @@ private:
     std::vector<size_t> rankBlocks;        //< Block for rank
     size_t rankSuperblockSize;             //< Size of one superblock
     std::vector<size_t> rankSuperblocks;   //< Superblock for rank
+    std::vector<uint8_t> rankLookup;       //< Lookup table for rank blocks
 };
 
 
