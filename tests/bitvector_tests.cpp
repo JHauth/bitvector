@@ -2,6 +2,77 @@
 
 #include "../src/bitvector.hpp"
 
+std::string generateBitString(const std::string& pattern, size_t totalBits) {
+    std::string result;
+    size_t patternLength = pattern.size();
+
+    if (patternLength == 0) {
+        return result; // Return an empty string if the pattern is empty
+    }
+
+    // Append the pattern repeatedly until we reach the desired length
+    while (result.size() + patternLength <= totalBits) {
+        result += pattern;
+    }
+
+    // Append the remaining bits if needed
+    size_t remainingBits = totalBits - result.size();
+    if (remainingBits > 0) {
+        result += pattern.substr(0, remainingBits);
+    }
+
+    return result;
+}
+
+TEST(GenerateBitString, BasicPattern) {
+    std::string pattern = "01";
+    size_t totalBits = 5;
+    std::string expected = "01010";
+    EXPECT_EQ(generateBitString(pattern, totalBits), expected);
+}
+
+TEST(GenerateBitString, PatternLargerThanTotalBits) {
+    std::string pattern = "110";
+    size_t totalBits = 2;
+    std::string expected = "11";
+    EXPECT_EQ(generateBitString(pattern, totalBits), expected);
+}
+
+TEST(GenerateBitString, ExactMultipleOfPattern) {
+    std::string pattern = "101";
+    size_t totalBits = 9;
+    std::string expected = "101101101";
+    EXPECT_EQ(generateBitString(pattern, totalBits), expected);
+}
+
+TEST(GenerateBitString, EmptyPattern) {
+    std::string pattern = "";
+    size_t totalBits = 10;
+    std::string expected = "";
+    EXPECT_EQ(generateBitString(pattern, totalBits), expected);
+}
+
+TEST(GenerateBitString, EmptyTotalBits) {
+    std::string pattern = "111";
+    size_t totalBits = 0;
+    std::string expected = "";
+    EXPECT_EQ(generateBitString(pattern, totalBits), expected);
+}
+
+TEST(GenerateBitString, LargePattern) {
+    std::string pattern = "110011001100";
+    size_t totalBits = 25;
+    std::string expected = "1100110011001100110011001";
+    EXPECT_EQ(generateBitString(pattern, totalBits), expected);
+}
+
+TEST(GenerateBitString, TotalBitsLessThanPatternLength) {
+    std::string pattern = "110011";
+    size_t totalBits = 4;
+    std::string expected = "1100";
+    EXPECT_EQ(generateBitString(pattern, totalBits), expected);
+}
+
 // Test the access function of the Bitvector class with basic patterns
 TEST(Access, BasicAssertions) {
     // Create a Bitvector with a known pattern
