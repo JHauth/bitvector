@@ -1,5 +1,6 @@
 #include "bitvector.hpp"
 #include <cmath>
+#include <bitset>
 
 uint8_t countOneBits(size_t n) {
     uint8_t count = 0;
@@ -17,7 +18,7 @@ Bitvector::Bitvector(std::string bits)
   rankSuperblockSize(rankBlockSize * rankBlockSize),
   rankSuperblocks(bits.size() / rankSuperblockSize + (bits.size() / rankSuperblockSize == 0 ? 0 : 1)),
   rankBlocks(bits.size() / rankBlockSize + (bits.size() / rankBlockSize == 0 ? 0 : 1)),
-  rankLookup(2 << rankBlockSize) {
+  rankLookup(1 << (rankBlockSize-1)) { //< Needs one less bc otherwise we would just look at the block
     // Fill bitvector uin64 from right to left
     for(size_t i = 0; i < bits.size(); i += 64) {
         uint64_t chunk = 0;
@@ -75,14 +76,44 @@ bool Bitvector::access(size_t i) {
     return bit;
 }
 
+std::string toBinaryString(uint64_t value) {
+    return std::bitset<64>(value).to_string();
+}
+
 size_t Bitvector::blockLookupOnes(size_t i) {
-    return 0;
+    size_t blockStart = ((i / rankBlockSize) * rankBlockSize);
+    size_t a = blockStart / 64;
+    size_t b = i / 64;
+    u_int64_t pattern;
+
+    if (a == b) {
+        pattern = bitvector[a];
+        auto foo = (64 - 1 - (i%64));
+        pattern <<= (64 - 1 - (i%64));
+        auto foo1 = pattern;
+        pattern >>= (blockStart % 64 + (64 - 1 - (i%64)));
+        foo = (blockStart % 64 + (64 - 1 - (i%64)));
+        auto foo2 = pattern;
+    } else {
+        pattern = bitvector[a];
+        uint64_t tmp = bitvector[b];
+
+        pattern >>= blockStart % 64;
+        tmp <<= (64 - 1 -(i % 64) - (64 - blockStart % 64));
+        pattern = pattern | tmp;
+    }
+    return rankLookup[pattern];
 }
 
 size_t Bitvector::rankOnes(size_t i) {
+    // Don't want to include the current index bit
+    --i;
     auto superblock = i / rankSuperblockSize;
     auto block = i / rankBlockSize;
-    auto res = rankSuperblocks[superblock] + rankBlocks[block] + blockLookupOnes(i); // + lookup
+    auto res = rankSuperblocks[superblock] + rankBlocks[block];
+    if ((i+1)%rankBlockSize != 0) {
+        res += blockLookupOnes(i);
+    }
     return res;
 }
 
