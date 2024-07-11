@@ -17,8 +17,8 @@ Bitvector::Bitvector(std::string bits)
   size(bits.size()),
   rankBlockSize(std::max(floor(log2(bits.size())/2), 1.0)), //< type warnings not really important here. Expected to be below 64
   rankSuperblockSize(rankBlockSize * rankBlockSize),
-  rankSuperblocks(bits.size() / rankSuperblockSize + (bits.size() / rankSuperblockSize == 0 ? 0 : 1)),
-  rankBlocks(bits.size() / rankBlockSize + (bits.size() / rankBlockSize == 0 ? 0 : 1)),
+  rankSuperblocks(bits.size() / rankSuperblockSize + (bits.size() % rankSuperblockSize == 0 ? 0 : 1)),
+  rankBlocks(bits.size() / rankBlockSize + (bits.size() % rankBlockSize == 0 ? 0 : 1)),
   rankLookup(1 << (rankBlockSize-1)) { //< Needs one less bc otherwise we would just look at the block
     // Fill bitvector uin64 from right to left
     for(size_t i = 0; i < bits.size(); i += 64) {
@@ -107,8 +107,6 @@ size_t Bitvector::blockLookupOnes(size_t i) {
 }
 
 size_t Bitvector::rankOnes(size_t i) {
-    // Don't want to include the current index bit
-    --i;
     auto superblock = i / rankSuperblockSize;
     auto block = i / rankBlockSize;
     auto res = rankSuperblocks[superblock] + rankBlocks[block];
@@ -119,11 +117,12 @@ size_t Bitvector::rankOnes(size_t i) {
 }
 
 size_t Bitvector::rank(bool bit, size_t i) {
-   if(bit) {
+    if (i==0) return 0;
+    if(bit) {
        return rankOnes(i);
-   } else {
-       return i - 1 - rankOnes(i);
-   }
+    } else {
+       return i - rankOnes(i);
+    }
 }
 
 size_t Bitvector::select(bool bit, size_t i) {
