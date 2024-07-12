@@ -39,7 +39,9 @@ public:
     bool access(size_t i);
 
     /**
-     * Get the index with n zeros or ones before
+     * Get the first position where n bits of type bit accumulated.
+     * Assumes that there is actually a position. If there is no position
+     * with n bits the behaviour is undefined!
      * @param bit What bit to track
      * @param n Amount of bits before position
      * @return The index where n bits are before
@@ -47,7 +49,8 @@ public:
     size_t select(bool bit, size_t n);
 
     /**
-     * Get the number of bits bit before index i
+     * Get the number of bits bit before index i.
+     * Undefined behaviour for invalid indices i!
      * @param bit What bit to track
      * @param i The index to begin tracking
      * @return Number of bits of type bit before the index i
