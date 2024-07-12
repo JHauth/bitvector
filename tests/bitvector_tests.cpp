@@ -242,7 +242,39 @@ TEST(Rank, EndBlock) {
 /**
  * Test select on very small bitvectors where block size is 0
  */
-TEST(Select, SmallBitvetor) {}
+TEST(Select, SmallBitvetor) {
+    // Test cases for bitvectors with only '1's
+    Bitvector bv("1");
+    EXPECT_EQ(bv.select(1, 1), 0);
+
+    Bitvector bv2("11");
+    EXPECT_EQ(bv2.select(1, 1), 0);
+    EXPECT_EQ(bv2.select(1, 2), 1);
+
+    Bitvector bv3("111");
+    EXPECT_EQ(bv3.select(1, 1), 0);
+    EXPECT_EQ(bv3.select(1, 2), 1);
+    EXPECT_EQ(bv3.select(1, 3), 2);
+
+    // Test cases for bitvectors with only '0's
+    Bitvector bv4("0");
+    EXPECT_EQ(bv4.select(0, 1), 0);
+
+    Bitvector bv5("00");
+    EXPECT_EQ(bv5.select(0, 1), 0);
+    EXPECT_EQ(bv5.select(0, 2), 1);
+
+    Bitvector bv6("000");
+    EXPECT_EQ(bv6.select(0, 1), 0);
+    EXPECT_EQ(bv6.select(0, 2), 1);
+    EXPECT_EQ(bv6.select(0, 3), 2);
+
+    // Test cases for mixed bitvectors
+    Bitvector bv7("101");
+    EXPECT_EQ(bv7.select(1, 1), 0);
+    EXPECT_EQ(bv7.select(1, 2), 2);
+    EXPECT_EQ(bv7.select(0, 1), 1);
+}
 
 /**
  * Test select where no lookup is needed
