@@ -90,7 +90,7 @@ void Bitvector::buildSelectStructure(std::vector<SelectSB> &superblocks, char bi
     size_t index = 0;
     size_t count = 0;
     for (size_t i = 0; i < superblocks.size(); ++i) {
-        while(count < i*selectSBsize && count < numberOfBits) {
+        while(count < (i+1)*selectSBsize && count < numberOfBits) {
             if (bits[index] == bit) ++count;
             ++index;
         }
@@ -107,13 +107,14 @@ void Bitvector::buildSelectStructure(std::vector<SelectSB> &superblocks, char bi
         } else {
             // Divide into blocks
             size_t bindex = 0;
+            superblocks[i].sbSelect.resize(selectSBsize / static_cast<size_t>(sqrt(log2(bits.size()))));
             for (size_t k = start; k < superblocks[i].index; ++k) {
-                // Track ones
+                // Track ones/zeros
                 if (bits[k] == bit) {
                     ++count;
                 }
-                // If count is number of ones in a block assign
-                if (count == bindex*static_cast<size_t>(sqrt(log2(bits.size())))) {
+                // If count is number of ones/zeros in a block assign
+                if (count == (bindex+1)*static_cast<size_t>(sqrt(log2(bits.size())))) {
                     // Assign index to block
                     superblocks[i].sbSelect[bindex] = k;
 
