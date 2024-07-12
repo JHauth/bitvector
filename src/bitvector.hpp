@@ -25,6 +25,12 @@ public:
     explicit Bitvector(std::string bits);
 
     /**
+     * Get the size of the bitvector
+     * @return Size of bitvector
+     */
+    size_t getSize() const;
+
+    /**
      * Access the bit a specific index.
      * Undefined behaviour for out-of-range access
      * @param i The index to access

@@ -71,6 +71,10 @@ Bitvector::Bitvector(std::string bits)
     }
 }
 
+size_t Bitvector::getSize() const {
+    return size;
+}
+
 bool Bitvector::access(size_t i) {
     uint64_t chunk = bitvector[i/64];
     bool bit = (chunk >> (i%64)) & static_cast<uint64_t>(1);
