@@ -81,6 +81,7 @@ Bitvector::Bitvector(std::string bits)
     selectOneSBs.resize(k1 / selectSBsize);
     selectZeroSBs.resize(k0 /selectSBsize);
 
+    // Fill Select one superblocks.
     size_t index = 0;
     size_t count = 0;
     for (size_t i = 0; i < selectOneSBs.size(); ++i) {
@@ -91,6 +92,7 @@ Bitvector::Bitvector(std::string bits)
         selectOneSBs[i].index = index;
     }
 
+    // Fill structure below select one superblocks
     size_t start = 0;
     index = 0;
     count = 0;
@@ -99,12 +101,26 @@ Bitvector::Bitvector(std::string bits)
             // Store answer naively with list
         } else {
             // Divide into blocks
+            size_t bindex = 0;
+            for (size_t k = start; k < selectOneSBs[i].index; ++k) {
+                // Track ones
+                if (bits[k] == '1') {
+                    ++count;
+                }
+                // If count is number of ones in a block assign
+                if (count == bindex*static_cast<size_t>(sqrt(log2(bits.size())))) {
+                    selectOneSBs[i].sbSelect[bindex] = count;
+                    ++bindex;
+                }
+                // Might have a leftover here that is not in a block!
+            }
         }
         for (size_t j = start; j < selectOneSBs[i].index; ++j) {
 
         }
     }
 
+    // Fill Select zero superblocks
     index = 0;
     count = 0;
     for (size_t i = 0; i < selectZeroSBs.size(); ++i) {
@@ -190,6 +206,7 @@ size_t Bitvector::selectZeros(size_t i) {
     if (i/selectSBsize != 0) {
         index = selectZeroSBs[i/selectSBsize - 1].index;
     }
+    // TODO: If pos is in last squed block this will not be a block. Rather take the end!
     return index;
 }
 
