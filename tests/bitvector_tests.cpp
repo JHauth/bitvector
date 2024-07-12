@@ -184,7 +184,7 @@ TEST(Rank, BlockOnly) {
     std::string bits = generateBitString("1", 32); //
     Bitvector bv(bits);
 
-    size_t block = std::max(floor(log2(bits.size())/2), 1.0);
+    size_t block = static_cast<size_t>(std::max(floor(log2(static_cast<double>(bits.size()))/2), 1.0));
 
     EXPECT_EQ(bv.rank(1, block), block); // First block
     EXPECT_EQ(bv.rank(1, block*block), block*block);
