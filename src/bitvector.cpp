@@ -78,8 +78,8 @@ Bitvector::Bitvector(std::string bits)
         else if (c == '0') ++k0;
     }
     selectSBsize = std::max(log2(bits.size()) * log2(bits.size()), 1.0);
-    selectOneSBs.resize(k1 / selectSBsize);
-    selectZeroSBs.resize(k0 /selectSBsize);
+    selectOneSBs.resize((k1 / selectSBsize) + (k1 % selectSBsize == 0 ? 0 : 1));
+    selectZeroSBs.resize((k0 / selectSBsize) + (k0 % selectSBsize == 0 ? 0 : 1));
 
     buildSelectStructure(selectOneSBs, '1', bits, k1);
     buildSelectStructure(selectZeroSBs, '0', bits, k0);
