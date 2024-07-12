@@ -219,7 +219,14 @@ TEST(Rank, BlockWithin64) {
  * Verifies the rank method when the index i is within a block that
  * spans across two uint64_t elements of the bitvector.
  */
-TEST(Rank, BlockBetween64) {}
+TEST(Rank, BlockBetween64) {
+    std::string bits = generateBitString("1", 80); // 80 bits
+    Bitvector bv(bits);
+
+    size_t i = 65;
+    EXPECT_EQ(bv.rank(1, i), i); // rank of 1s before index 65 should be 32
+
+}
 
 /**
  * Ensures that the rank method handles the case where the index i is in the last,
