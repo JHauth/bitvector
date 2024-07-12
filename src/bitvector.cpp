@@ -69,6 +69,38 @@ Bitvector::Bitvector(std::string bits)
     for (size_t i = 0; i < rankLookup.size(); ++i) {
         rankLookup[i] = countOneBits(i);
     }
+
+    // Fill select helper structures
+    size_t k0 = 0; //< used later for select, counts number of zeros
+    size_t k1 = 0; //< used later for select, counts number of ones
+    for (auto& c : bits) {
+        if (c == '1') ++k1;
+        else if (c == '0') ++k0;
+    }
+    selectSBsize = std::max(log2(bits.size()) * log2(bits.size()), 1.0);
+    selectOneSBs.resize(k1 / selectSBsize);
+    selectZeroSBs.resize(k0 /selectSBsize);
+
+    size_t index = 0;
+    size_t count = 0;
+    for (size_t i = 0; i < selectOneSBs.size(); ++i) {
+        while(count < i*selectSBsize) {
+            if (bits[index] == '1') ++count;
+            ++index;
+        }
+        selectOneSBs[i] = index;
+    }
+
+    index = 0;
+    count = 0;
+    for (size_t i = 0; i < selectZeroSBs.size(); ++i) {
+        while(count < i*selectSBsize) {
+            if (bits[index] == '1') ++count;
+            ++index;
+        }
+        selectZeroSBs[i] = index;
+    }
+
 }
 
 size_t Bitvector::getSize() const {
