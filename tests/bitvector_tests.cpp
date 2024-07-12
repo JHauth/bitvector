@@ -150,3 +150,26 @@ TEST(Access, LargePatterns) {
         }
     }
 }
+
+/**
+ * Tests the bitvector for sizes where the block size is 0.
+ */
+TEST(Rank, SmallBitvector) {
+    Bitvector bv("1");
+    EXPECT_EQ(bv.rank(1,0), 0);
+    EXPECT_EQ(bv.rank(0,0), 0);
+
+    Bitvector bv2("11");
+    EXPECT_EQ(bv2.rank(1,0), 0);
+    EXPECT_EQ(bv2.rank(0,0), 0);
+    EXPECT_EQ(bv2.rank(0,1), 0);
+    EXPECT_EQ(bv2.rank(1,1), 1);
+
+    Bitvector bv3("111");
+    EXPECT_EQ(bv3.rank(1,0), 0);
+    EXPECT_EQ(bv3.rank(0,0), 0);
+    EXPECT_EQ(bv3.rank(0,1), 0);
+    EXPECT_EQ(bv3.rank(1,1), 1);
+    EXPECT_EQ(bv3.rank(1,2), 2);
+    EXPECT_EQ(bv3.rank(0,2), 0);
+}
