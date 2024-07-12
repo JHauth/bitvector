@@ -109,6 +109,13 @@ void Bitvector::buildSelectStructure(std::vector<SelectSB> &superblocks, char bi
     for (size_t i = 0; i < superblocks.size(); ++i) {
         if (superblocks[i].index - start >= static_cast<size_t>(pow(log2(bits.size()), 4))) {
             // Store answer naively with list
+            superblocks[i].sbSelect.resize(selectSBsize);
+            for (size_t k, n = 0; n < selectSBsize && start+k < superblocks[i].index; ++k) {
+                if (bits[start + k] == bit) {
+                    superblocks[i].sbSelect[n] = k;
+                    ++n;
+                }
+            }
         } else {
             // Divide into blocks
             size_t bindex = 0;
