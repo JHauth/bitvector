@@ -31,7 +31,7 @@ private:
      */
     size_t blockLookupOnes(size_t i);
 
-    size_t selectZeros(size_t i);
+    size_t selectBits(size_t i, std::vector<SelectSB>& superblocks);
 
     void buildSelectStructure(std::vector<SelectSB>& superblocks, char bit, std::string& bits, size_t numberOfBits);
 public:

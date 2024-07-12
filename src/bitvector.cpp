@@ -199,10 +199,10 @@ size_t Bitvector::rank(bool bit, size_t i) {
     }
 }
 
-size_t Bitvector::selectZeros(size_t i) {
+size_t Bitvector::selectBits(size_t i, std::vector<SelectSB> &superblocks) {
     size_t index = 0;
     if (i/selectSBsize != 0) {
-        index = selectZeroSBs[i/selectSBsize - 1].index;
+        index = superblocks[i/selectSBsize - 1].index;
     }
     // TODO: If pos is in last squed block this will not be a block. Rather take the end!
     return index;
@@ -210,9 +210,9 @@ size_t Bitvector::selectZeros(size_t i) {
 
 size_t Bitvector::select(bool bit, size_t i) {
     if (bit) {
-        return 0;
+        return selectBits(i, selectOneSBs);
     } else {
-        return selectZeros(i);
+        return selectBits(i, selectZeroSBs);
     }
 }
 
