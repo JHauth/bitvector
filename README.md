@@ -1,9 +1,3 @@
 # Bit vector - Exercise
 ## Build
-TODO
-
-## Test
-TODO
-
-## Run
-TODO
+Simple Cmake project. Will download googletest for testing purposes automatically.
