@@ -82,6 +82,7 @@ std::string toBinaryString(uint64_t value) {
 }
 
 size_t Bitvector::blockLookupOnes(size_t i) {
+    --i; // Assume i != 0
     size_t blockStart = ((i / rankBlockSize) * rankBlockSize);
     size_t a = blockStart / 64;
     size_t b = i / 64;
