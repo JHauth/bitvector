@@ -36,6 +36,8 @@ private:
     void buildSelectStructure(std::vector<SelectSB>& superblocks, char bit, std::string& bits, size_t numberOfBits);
 
     void buildSelectLookup(std::vector<std::vector<size_t>>& table, bool bit);
+
+    size_t getRange(size_t start, size_t end);
 public:
     explicit Bitvector(std::string bits);
 

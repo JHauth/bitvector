@@ -185,11 +185,9 @@ std::string toBinaryString(uint64_t value) {
     return std::bitset<64>(value).to_string();
 }
 
-size_t Bitvector::blockLookupOnes(size_t i) {
-    --i; // Assume i != 0
-    size_t blockStart = ((i / rankBlockSize) * rankBlockSize);
-    size_t a = blockStart / 64;
-    size_t b = i / 64;
+size_t Bitvector::getRange(size_t start, size_t end) {
+    size_t a = start / 64;
+    size_t b = end / 64;
     u_int64_t pattern;
 
     /**
@@ -201,22 +199,31 @@ size_t Bitvector::blockLookupOnes(size_t i) {
     if (a == b) {
         pattern = bitvector[a];
         // Cut the left side
-        pattern <<= (64 - 1 - (i%64));
+        pattern <<= (64 - 1 - (end%64));
         // Cut the right side
-        pattern >>= (blockStart % 64 + (64 - 1 - (i%64)));
+        pattern >>= (start % 64 + (64 - 1 - (end%64)));
     } else {
         pattern = bitvector[a];
         uint64_t tmp = bitvector[b];
 
         // Cut the right side
-        pattern >>= blockStart % 64;
+        pattern >>= start % 64;
         // Cut the left side
-        tmp <<= (64 - 1 -(i % 64));
+        tmp <<= (64 - 1 -(end % 64));
         // Move so tmp overlaps correctly with pattern
-        tmp >>= (64 - 1 -(i % 64) - (64 - blockStart % 64));
+        tmp >>= (64 - 1 -(end % 64) - (64 - start % 64));
         // Add the two patterns together
         pattern = pattern | tmp;
     }
+
+    return pattern;
+}
+
+size_t Bitvector::blockLookupOnes(size_t i) {
+    --i; // Assume i != 0
+    size_t blockStart = ((i / rankBlockSize) * rankBlockSize);
+    u_int64_t pattern;
+    pattern = getRange(blockStart, i);
     return rankLookup[pattern];
 }
 
