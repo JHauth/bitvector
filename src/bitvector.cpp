@@ -88,20 +88,29 @@ size_t Bitvector::blockLookupOnes(size_t i) {
     size_t b = i / 64;
     u_int64_t pattern;
 
+    /**
+     * Remember for all following operations in if:
+     * The uint64_t blocks are in reversed order,
+     * so when I say cut the left side we actually
+     * cut the right side!
+     */
     if (a == b) {
         pattern = bitvector[a];
-        auto foo = (64 - 1 - (i%64));
+        // Cut the left side
         pattern <<= (64 - 1 - (i%64));
-        auto foo1 = pattern;
+        // Cut the right side
         pattern >>= (blockStart % 64 + (64 - 1 - (i%64)));
-        foo = (blockStart % 64 + (64 - 1 - (i%64)));
-        auto foo2 = pattern;
     } else {
         pattern = bitvector[a];
         uint64_t tmp = bitvector[b];
 
+        // Cut the right side
         pattern >>= blockStart % 64;
-        tmp <<= (64 - 1 -(i % 64) - (64 - blockStart % 64));
+        // Cut the left side
+        tmp <<= (64 - 1 -(i % 64));
+        // Move so tmp overlaps correctly with pattern
+        tmp >>= (64 - 1 -(i % 64) - (64 - blockStart % 64));
+        // Add the two patterns together
         pattern = pattern | tmp;
     }
     return rankLookup[pattern];
