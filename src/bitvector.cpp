@@ -246,7 +246,7 @@ size_t Bitvector::rank(bool bit, size_t i) {
     }
 }
 
-size_t Bitvector::selectBits(size_t i, std::vector<SelectSB> &superblocks, std::vector<std::vector<size_t>>& lookupTable) {
+size_t Bitvector::selectBits(size_t i, std::vector<SelectSB> &superblocks, std::vector<std::vector<size_t>>& lookupTable, bool bit) {
     size_t index = 0;
     if (i/selectSBsize != 0) {
         index = superblocks[i/selectSBsize - 1].index;
@@ -268,7 +268,7 @@ size_t Bitvector::selectBits(size_t i, std::vector<SelectSB> &superblocks, std::
         size_t blockStart = 0;
         if (bitsLeft / selectBlockSize > 0) {
             index += superblocks[i/selectSBsize].sbSelect[bitsLeft / selectBlockSize - 1];
-            blockStart = index;
+            blockStart = index+1;
         }
         size_t blockEnd = superblocks[i/selectSBsize].sbSelect[bitsLeft / selectBlockSize + 1];
 
@@ -277,7 +277,12 @@ size_t Bitvector::selectBits(size_t i, std::vector<SelectSB> &superblocks, std::
             // Need to look in block
             if (blockEnd - blockStart >= static_cast<size_t>(log2(getSize()))) {
                 // List lookup
-                auto foo = 0;
+                for (size_t k = 0; k < blockEnd-blockStart && bitsLeft > 0; ++k) {
+                    if (access(blockStart+k) == bit) {
+                        bitsLeft--;
+                        if (bitsLeft == 0) return blockStart+k;
+                    }
+                }
             } else {
                 // Lookup table
                 index += lookupTable[getRange(blockStart, blockEnd)][bitsLeft-1];
@@ -288,10 +293,22 @@ size_t Bitvector::selectBits(size_t i, std::vector<SelectSB> &superblocks, std::
 }
 
 size_t Bitvector::select(bool bit, size_t i) {
+    // Base case
+    auto bitsLeft = i;
+    if (getSize() < 100) {
+        size_t k = 0;
+        for (k=0; k < getSize() && bitsLeft > 0; ++k) {
+            if (access(k) == bit) {
+                bitsLeft--;
+                if (bitsLeft == 0) return k;
+            }
+        }
+    }
+
     if (bit) {
-        return selectBits(i, selectOneSBs, selectOnesLookup);
+        return selectBits(i, selectOneSBs, selectOnesLookup, 1);
     } else {
-        return selectBits(i, selectZeroSBs, selectZerosLookup);
+        return selectBits(i, selectZeroSBs, selectZerosLookup, 1);
     }
 }
 
