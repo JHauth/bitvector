@@ -214,7 +214,19 @@ size_t Bitvector::selectBits(size_t i, std::vector<SelectSB> &superblocks) {
     if (i/selectSBsize != 0) {
         index = superblocks[i/selectSBsize - 1].index;
     }
-    // TODO: If pos is in last squed block this will not be a block. Rather take the end!
+
+    size_t superBlockStart = index + 1;
+    size_t superblockLen = superblocks[i/selectSBsize].index - superBlockStart;
+
+    if (superblockLen >= static_cast<size_t>(pow(log2(getSize()), 4))) {
+        // List
+    } else {
+        // Superblock is divided into blocks
+        size_t bitsLeft = i - index;
+        if (bitsLeft / selectBlockSize > 0) {
+            index += superblocks[i/selectSBsize].sbSelect[bitsLeft / selectBlockSize - 1];
+        }
+    }
     return index;
 }
 
