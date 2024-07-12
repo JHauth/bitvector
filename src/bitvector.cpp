@@ -85,6 +85,12 @@ Bitvector::Bitvector(std::string bits)
     buildSelectStructure(selectZeroSBs, '0', bits, k0);
 }
 
+/**
+ * Every superblock has selectSBsize zeros/ones. However the last ones index is the last zero/one in the bitvector, so
+ * the last superblocks index might not be to the selectSBsize.
+ * Same pattern with blocks within the superblock.
+ * This assures that a select is always within some kind of block.
+ */
 void Bitvector::buildSelectStructure(std::vector<SelectSB> &superblocks, char bit, std::string& bits, size_t numberOfBits) {
     // Fill Select superblocks.
     size_t index = 0;
@@ -94,7 +100,7 @@ void Bitvector::buildSelectStructure(std::vector<SelectSB> &superblocks, char bi
             if (bits[index] == bit) ++count;
             ++index;
         }
-        superblocks[i].index = index;
+        superblocks[i].index = index-1;
     }
 
     // Fill structure below select superblocks
@@ -107,14 +113,17 @@ void Bitvector::buildSelectStructure(std::vector<SelectSB> &superblocks, char bi
         } else {
             // Divide into blocks
             size_t bindex = 0;
-            superblocks[i].sbSelect.resize(selectSBsize / static_cast<size_t>(sqrt(log2(bits.size()))));
-            for (size_t k = start; k < superblocks[i].index; ++k) {
+            auto tmp = static_cast<size_t>(sqrt(log2(bits.size())));
+            superblocks[i].sbSelect.resize((selectSBsize / tmp) + (selectSBsize % tmp == 0 ? 0 : 1));
+
+            for (size_t k = start; k <= superblocks[i].index && count < selectSBsize; ++k) {
                 // Track ones/zeros
                 if (bits[k] == bit) {
                     ++count;
                 }
-                // If count is number of ones/zeros in a block assign
-                if (count == (bindex+1)*static_cast<size_t>(sqrt(log2(bits.size())))) {
+                // If count is number of ones/zeros in a block assign or it is the last block
+                if (count == (bindex+1)*static_cast<size_t>(sqrt(log2(bits.size()))) ||
+                    k == superblocks[i].index) {
                     // Assign index to block
                     superblocks[i].sbSelect[bindex] = k;
 
@@ -125,9 +134,10 @@ void Bitvector::buildSelectStructure(std::vector<SelectSB> &superblocks, char bi
                     }
                     ++bindex;
                 }
-                // Might have a leftover here that is not in a block!
             }
         }
+        // Set start for next block
+        start = superblocks[i].index + 1;
     }
 }
 
