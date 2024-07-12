@@ -44,12 +44,12 @@ Bitvector::Bitvector(std::string bits)
      * Chose to store ones and not zeros because of lookup table ability to get partial patterns.
      */
     size_t superblockOnes = 0;
+    size_t blocksInSuperblock = (rankSuperblockSize/rankBlockSize);
     for (size_t i = 0; i < rankSuperblocks.size(); ++i) { // for each superblock
         rankSuperblocks[i] = superblockOnes;
         size_t blockOnes = 0;
-        // ERROR: For each superblock do blocks. Currently superblock do all blocks...
-        for (size_t j = 0; j < rankBlocks.size() && j < rankSuperblockSize/rankBlockSize; ++j) { // for each block within superblock
-            rankBlocks[j] = blockOnes;
+        for (size_t j = 0; i*blocksInSuperblock+j < rankBlocks.size() && j < rankSuperblockSize/rankBlockSize; ++j) { // for each block within superblock
+            rankBlocks[i*blocksInSuperblock+j] = blockOnes;
             for (size_t k = i * rankSuperblockSize + j * rankBlockSize; // for each bit
             k < i * rankSuperblockSize + (j + 1) * rankBlockSize && k < bits.size(); ++k) {
                 if (bits[k] == '1') {
@@ -110,7 +110,7 @@ size_t Bitvector::rankOnes(size_t i) {
     auto superblock = i / rankSuperblockSize;
     auto block = i / rankBlockSize;
     auto res = rankSuperblocks[superblock] + rankBlocks[block];
-    if ((i+1)%rankBlockSize != 0) {
+    if (i%rankBlockSize != 0) {
         res += blockLookupOnes(i);
     }
     return res;
