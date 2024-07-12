@@ -195,7 +195,25 @@ TEST(Rank, BlockOnly) {
  * Tests the rank method when the index i is within a block,
  * and the block is inside a single uint64_t element of the bitvector.
  */
-TEST(Rank, BlockWithin64) {}
+TEST(Rank, BlockWithin64) {
+    std::string bits = generateBitString("10", 64); // 64 bits
+    Bitvector bv(bits);
+
+    EXPECT_EQ(bv.rank(1, 10), 5);
+    EXPECT_EQ(bv.rank(0, 10), 5);
+    EXPECT_EQ(bv.rank(1, 11), 6);
+    EXPECT_EQ(bv.rank(0, 11), 5);
+
+    std::string bits2 = generateBitString("10", 128); // 64 bits
+    Bitvector bv2(bits2);
+    EXPECT_EQ(bv2.rank(1, 10), 5);
+    EXPECT_EQ(bv2.rank(0, 10), 5);
+    EXPECT_EQ(bv2.rank(1, 11), 6);
+    EXPECT_EQ(bv2.rank(0, 11), 5);
+
+    EXPECT_EQ(bv2.rank(0, 70), 35);
+    EXPECT_EQ(bv2.rank(1, 70), 35);
+}
 
 /**
  * Verifies the rank method when the index i is within a block that
