@@ -226,6 +226,6 @@ size_t Bitvector::select(bool bit, size_t i) {
     }
 }
 
-size_t Bitvector::getSize() {
+size_t Bitvector::getSpace() {
     return sizeof(*this) * 8;
 }

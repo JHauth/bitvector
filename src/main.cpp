@@ -89,7 +89,7 @@ int main(int argc, char* argv[]) {
         }
 
         // Output result
-        printf("%zu name=%s time=%f space=%zu\n", res, NAME, timeInMS.count(), bitvector.getSize());
+        printf("%zu name=%s time=%f space=%zu\n", res, NAME, timeInMS.count(), bitvector.getSpace());
         output << res << std::endl;
     }
 

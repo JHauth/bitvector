@@ -74,7 +74,7 @@ public:
      * Returns the size of the class
      * @return size in bits
      */
-    size_t getSize();
+    size_t getSpace();
 
 private:
     std::vector<uint64_t> bitvector;       //< Holds bits
