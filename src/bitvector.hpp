@@ -21,6 +21,8 @@ private:
      * @return Number of ones in block at position
      */
     size_t blockLookupOnes(size_t i);
+
+    size_t selectZeros(size_t i);
 public:
     explicit Bitvector(std::string bits);
 

@@ -84,7 +84,7 @@ Bitvector::Bitvector(std::string bits)
     size_t index = 0;
     size_t count = 0;
     for (size_t i = 0; i < selectOneSBs.size(); ++i) {
-        while(count < i*selectSBsize) {
+        while(count < i*selectSBsize && count < k1) {
             if (bits[index] == '1') ++count;
             ++index;
         }
@@ -94,7 +94,7 @@ Bitvector::Bitvector(std::string bits)
     index = 0;
     count = 0;
     for (size_t i = 0; i < selectZeroSBs.size(); ++i) {
-        while(count < i*selectSBsize) {
+        while(count < i*selectSBsize && count << k0) {
             if (bits[index] == '1') ++count;
             ++index;
         }
@@ -171,8 +171,20 @@ size_t Bitvector::rank(bool bit, size_t i) {
     }
 }
 
+size_t Bitvector::selectZeros(size_t i) {
+    size_t index = 0;
+    if (i/selectSBsize != 0) {
+        index = selectZeroSBs[i/selectSBsize - 1];
+    }
+    return index;
+}
+
 size_t Bitvector::select(bool bit, size_t i) {
-    return 0;
+    if (bit) {
+        return 0;
+    } else {
+        return selectZeros(i);
+    }
 }
 
 size_t Bitvector::getSize() {
