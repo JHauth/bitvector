@@ -34,6 +34,8 @@ private:
     size_t selectBits(size_t i, std::vector<SelectSB>& superblocks);
 
     void buildSelectStructure(std::vector<SelectSB>& superblocks, char bit, std::string& bits, size_t numberOfBits);
+
+    void buildSelectLookup(std::vector<std::vector<size_t>>& table, bool bit);
 public:
     explicit Bitvector(std::string bits);
 
@@ -88,6 +90,8 @@ private:
     size_t selectBlockSize;                //< How many bits of one kind are in select block
     std::vector<SelectSB> selectZeroSBs;     //< Select superblocks for zeros
     std::vector<SelectSB> selectOneSBs;      //< Select superblocks for ones
+    std::vector<std::vector<size_t>> selectOnesLookup;  //< Ones Lookup table for select
+    std::vector<std::vector<size_t>> selectZerosLookup; //< Ones Lookup table for select
 };
 
 

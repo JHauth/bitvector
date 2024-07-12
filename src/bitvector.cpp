@@ -21,7 +21,9 @@ Bitvector::Bitvector(std::string bits)
   rankBlocks(bits.size() / rankBlockSize + (bits.size() % rankBlockSize == 0 ? 0 : 1)),
   rankLookup(1 << (rankBlockSize-1)),  //< Needs one less bc otherwise we would just look at the block
   selectSBsize(std::max(log2(bits.size()) * log2(bits.size()), 1.0)),
-  selectBlockSize(static_cast<size_t>(sqrt(log2(bits.size())))) {
+  selectBlockSize(static_cast<size_t>(sqrt(log2(bits.size())))),
+  selectOnesLookup(1 << static_cast<size_t>(log2(bits.size()))),
+  selectZerosLookup(1 << static_cast<size_t>(log2(bits.size()))){
     // Fill bitvector uin64 from right to left
     for(size_t i = 0; i < bits.size(); i += 64) {
         uint64_t chunk = 0;
@@ -84,6 +86,11 @@ Bitvector::Bitvector(std::string bits)
 
     buildSelectStructure(selectOneSBs, '1', bits, k1);
     buildSelectStructure(selectZeroSBs, '0', bits, k0);
+
+    buildSelectLookup(selectOnesLookup, 1);
+    buildSelectLookup(selectZerosLookup, 0);
+
+
 }
 
 /**
@@ -146,6 +153,21 @@ void Bitvector::buildSelectStructure(std::vector<SelectSB> &superblocks, char bi
         }
         // Set start for next block
         start = superblocks[i].index + 1;
+    }
+}
+
+void Bitvector::buildSelectLookup(std::vector<std::vector<size_t>>& table, bool bit) {
+    for (size_t pattern = 0; pattern < table.size(); ++pattern) {
+        table[pattern].resize(selectBlockSize);
+        size_t tmp = pattern;
+        size_t count = 0;
+        for (size_t i = 0; i < selectBlockSize; ++i) {
+            // Getting the pattern in reversed order!
+            if ((tmp & 1) == bit) {
+                table[pattern][count++] = i;
+            }
+            tmp >>= 1;
+        }
     }
 }
 
