@@ -238,3 +238,29 @@ TEST(Rank, EndBlock) {
 
     EXPECT_EQ(bv.rank(1, 1023), 1023);
 }
+
+/**
+ * Test select on very small bitvectors where block size is 0
+ */
+TEST(Select, SmallBitvetor) {}
+
+/**
+ * Test select where no lookup is needed
+ */
+TEST(Select, BlockOnly) {}
+
+/**
+* Test select where lookup is needed but block is within 64 bit block
+*/
+TEST(Select, BlockWithin64) {}
+
+/**
+* Test select where lookup is needed and block is
+* between two 64 bit blocks
+*/
+TEST(Select, BlockBetween64) {}
+
+/**
+ * Test select on last unfilled block
+ */
+TEST(Select, EndBlock) {}
