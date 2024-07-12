@@ -33,7 +33,7 @@ Bitvector::Bitvector(std::string bits)
         bitvector[i / 64] = chunk;
     }
 
-    // Fill rank helper structure.
+    // Fill rank helper structure. -------------------------------------------------------------------------------- rank
     /**
      * This could be done in the for loop before if
      * performance in constructor would be important too.
@@ -70,7 +70,7 @@ Bitvector::Bitvector(std::string bits)
         rankLookup[i] = countOneBits(i);
     }
 
-    // Fill select helper structures
+    // Fill select helper structures ---------------------------------------------------------------------------- select
     size_t k0 = 0; //< used later for select, counts number of zeros
     size_t k1 = 0; //< used later for select, counts number of ones
     for (auto& c : bits) {
@@ -89,6 +89,20 @@ Bitvector::Bitvector(std::string bits)
             ++index;
         }
         selectOneSBs[i].index = index;
+    }
+
+    size_t start = 0;
+    index = 0;
+    count = 0;
+    for (size_t i = 0; i < selectOneSBs.size(); ++i) {
+        if (selectOneSBs[i].index - start >= static_cast<size_t>(pow(log2(bits.size()), 4))) {
+            // Store answer naively with list
+        } else {
+            // Divide into blocks
+        }
+        for (size_t j = start; j < selectOneSBs[i].index; ++j) {
+
+        }
     }
 
     index = 0;

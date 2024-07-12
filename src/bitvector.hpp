@@ -66,6 +66,10 @@ public:
     size_t getSize();
 
 private:
+    struct SelectBlock {
+        size_t index;
+        std::vector<size_t> blockSelect;
+    };
     struct SelectSB {
         size_t index;
         std::vector<size_t> sbSelect;
