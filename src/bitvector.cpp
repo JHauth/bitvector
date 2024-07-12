@@ -88,7 +88,7 @@ Bitvector::Bitvector(std::string bits)
             if (bits[index] == '1') ++count;
             ++index;
         }
-        selectOneSBs[i] = index;
+        selectOneSBs[i].index = index;
     }
 
     index = 0;
@@ -98,7 +98,7 @@ Bitvector::Bitvector(std::string bits)
             if (bits[index] == '1') ++count;
             ++index;
         }
-        selectZeroSBs[i] = index;
+        selectZeroSBs[i].index = index;
     }
 
 }
@@ -174,7 +174,7 @@ size_t Bitvector::rank(bool bit, size_t i) {
 size_t Bitvector::selectZeros(size_t i) {
     size_t index = 0;
     if (i/selectSBsize != 0) {
-        index = selectZeroSBs[i/selectSBsize - 1];
+        index = selectZeroSBs[i/selectSBsize - 1].index;
     }
     return index;
 }

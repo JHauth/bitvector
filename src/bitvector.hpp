@@ -66,6 +66,10 @@ public:
     size_t getSize();
 
 private:
+    struct SelectSB {
+        size_t index;
+        std::vector<size_t> sbSelect;
+    };
     std::vector<uint64_t> bitvector;       //< Holds bits
     size_t size;                           //< Number of bits in bitvector
     size_t rankBlockSize;                  //< Size of one block
@@ -74,8 +78,8 @@ private:
     std::vector<size_t> rankSuperblocks;   //< Superblock for rank
     std::vector<uint8_t> rankLookup;       //< Lookup table for rank blocks
     size_t selectSBsize;                   //< How many bits of one kind are in select superblock
-    std::vector<size_t> selectZeroSBs;     //< Select superblocks for zeros
-    std::vector<size_t> selectOneSBs;      //< Select superblocks for ones
+    std::vector<SelectSB> selectZeroSBs;     //< Select superblocks for zeros
+    std::vector<SelectSB> selectOneSBs;      //< Select superblocks for ones
 };
 
 
