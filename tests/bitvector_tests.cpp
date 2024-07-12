@@ -232,4 +232,9 @@ TEST(Rank, BlockBetween64) {
  * Ensures that the rank method handles the case where the index i is in the last,
  * partially filled block of the bitvector.
  */
-TEST(Rank, EndBlock) {}
+TEST(Rank, EndBlock) {
+    std::string bits = generateBitString("1", 1024);
+    Bitvector bv(bits);
+
+    EXPECT_EQ(bv.rank(1, 1023), 1023);
+}
