@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <cmath>
 
 #include "../src/bitvector.hpp"
 
@@ -179,7 +180,16 @@ TEST(Rank, SmallBitvector) {
  * The rank calculation should only include the superblock and block values,
  * without needing a lookup.
  */
-TEST(Rank, BlockOnly) {}
+TEST(Rank, BlockOnly) {
+    std::string bits = generateBitString("1", 32); //
+    Bitvector bv(bits);
+
+    size_t block = std::max(floor(log2(bits.size())/2), 1.0);
+
+    EXPECT_EQ(bv.rank(1, block), block); // First block
+    EXPECT_EQ(bv.rank(1, block*block), block*block);
+    EXPECT_EQ(bv.rank(1, block*block+block), block*block+block);
+}
 
 /**
  * Tests the rank method when the index i is within a block,

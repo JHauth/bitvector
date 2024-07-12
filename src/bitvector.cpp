@@ -49,7 +49,7 @@ Bitvector::Bitvector(std::string bits)
         size_t blockOnes = 0;
         // ERROR: For each superblock do blocks. Currently superblock do all blocks...
         for (size_t j = 0; j < rankBlocks.size() && j < rankSuperblockSize/rankBlockSize; ++j) { // for each block within superblock
-            rankBlocks[j] = blockOnes;
+            rankBlocks[i*(rankSuperblockSize/rankBlockSize) + j] = blockOnes;
             for (size_t k = i * rankSuperblockSize + j * rankBlockSize; // for each bit
             k < i * rankSuperblockSize + (j + 1) * rankBlockSize && k < bits.size(); ++k) {
                 if (bits[k] == '1') {
@@ -110,7 +110,7 @@ size_t Bitvector::rankOnes(size_t i) {
     auto superblock = i / rankSuperblockSize;
     auto block = i / rankBlockSize;
     auto res = rankSuperblocks[superblock] + rankBlocks[block];
-    if ((i+1)%rankBlockSize != 0) {
+    if (i%rankBlockSize != 0) {
         res += blockLookupOnes(i);
     }
     return res;
