@@ -246,7 +246,7 @@ size_t Bitvector::rank(bool bit, size_t i) {
     }
 }
 
-size_t Bitvector::selectBits(size_t i, std::vector<SelectSB> &superblocks) {
+size_t Bitvector::selectBits(size_t i, std::vector<SelectSB> &superblocks, std::vector<std::vector<size_t>>& lookupTable) {
     size_t index = 0;
     if (i/selectSBsize != 0) {
         index = superblocks[i/selectSBsize - 1].index;
@@ -265,8 +265,23 @@ size_t Bitvector::selectBits(size_t i, std::vector<SelectSB> &superblocks) {
     } else {
         // Superblock is divided into blocks
         size_t bitsLeft = i - index;
+        size_t blockStart = 0;
         if (bitsLeft / selectBlockSize > 0) {
             index += superblocks[i/selectSBsize].sbSelect[bitsLeft / selectBlockSize - 1];
+            blockStart = index;
+        }
+        size_t blockEnd = superblocks[i/selectSBsize].sbSelect[bitsLeft / selectBlockSize + 1];
+
+        bitsLeft = i - index;
+        if (bitsLeft > 0) {
+            // Need to look in block
+            if (blockEnd - blockStart >= static_cast<size_t>(log2(getSize()))) {
+                // List lookup
+                auto foo = 0;
+            } else {
+                // Lookup table
+                index += lookupTable[getRange(blockStart, blockEnd)][bitsLeft-1];
+            }
         }
     }
     return index;
@@ -274,9 +289,9 @@ size_t Bitvector::selectBits(size_t i, std::vector<SelectSB> &superblocks) {
 
 size_t Bitvector::select(bool bit, size_t i) {
     if (bit) {
-        return selectBits(i, selectOneSBs);
+        return selectBits(i, selectOneSBs, selectOnesLookup);
     } else {
-        return selectBits(i, selectZeroSBs);
+        return selectBits(i, selectZeroSBs, selectZerosLookup);
     }
 }
 
