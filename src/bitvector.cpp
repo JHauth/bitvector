@@ -81,56 +81,53 @@ Bitvector::Bitvector(std::string bits)
     selectOneSBs.resize(k1 / selectSBsize);
     selectZeroSBs.resize(k0 /selectSBsize);
 
-    // Fill Select one superblocks.
+    buildSelectStructure(selectOneSBs, '1', bits, k1);
+    buildSelectStructure(selectZeroSBs, '0', bits, k0);
+}
+
+void Bitvector::buildSelectStructure(std::vector<SelectSB> &superblocks, char bit, std::string& bits, size_t numberOfBits) {
+    // Fill Select superblocks.
     size_t index = 0;
     size_t count = 0;
-    for (size_t i = 0; i < selectOneSBs.size(); ++i) {
-        while(count < i*selectSBsize && count < k1) {
-            if (bits[index] == '1') ++count;
+    for (size_t i = 0; i < superblocks.size(); ++i) {
+        while(count < i*selectSBsize && count < numberOfBits) {
+            if (bits[index] == bit) ++count;
             ++index;
         }
-        selectOneSBs[i].index = index;
+        superblocks[i].index = index;
     }
 
-    // Fill structure below select one superblocks
+    // Fill structure below select superblocks
     size_t start = 0;
     index = 0;
     count = 0;
-    for (size_t i = 0; i < selectOneSBs.size(); ++i) {
-        if (selectOneSBs[i].index - start >= static_cast<size_t>(pow(log2(bits.size()), 4))) {
+    for (size_t i = 0; i < superblocks.size(); ++i) {
+        if (superblocks[i].index - start >= static_cast<size_t>(pow(log2(bits.size()), 4))) {
             // Store answer naively with list
         } else {
             // Divide into blocks
             size_t bindex = 0;
-            for (size_t k = start; k < selectOneSBs[i].index; ++k) {
+            for (size_t k = start; k < superblocks[i].index; ++k) {
                 // Track ones
-                if (bits[k] == '1') {
+                if (bits[k] == bit) {
                     ++count;
                 }
                 // If count is number of ones in a block assign
                 if (count == bindex*static_cast<size_t>(sqrt(log2(bits.size())))) {
-                    selectOneSBs[i].sbSelect[bindex] = count;
+                    // Assign index to block
+                    superblocks[i].sbSelect[bindex] = k;
+
+                    if (k - start >= static_cast<size_t>(log2(bits.size()))) {
+                        // Block needs a list
+                    } else {
+                        // Block uses lookup
+                    }
                     ++bindex;
                 }
                 // Might have a leftover here that is not in a block!
             }
         }
-        for (size_t j = start; j < selectOneSBs[i].index; ++j) {
-
-        }
     }
-
-    // Fill Select zero superblocks
-    index = 0;
-    count = 0;
-    for (size_t i = 0; i < selectZeroSBs.size(); ++i) {
-        while(count < i*selectSBsize && count << k0) {
-            if (bits[index] == '1') ++count;
-            ++index;
-        }
-        selectZeroSBs[i].index = index;
-    }
-
 }
 
 size_t Bitvector::getSize() const {

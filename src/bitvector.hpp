@@ -8,6 +8,15 @@
 
 class Bitvector {
 private:
+    struct SelectBlock {
+        size_t index;
+        std::vector<size_t> blockSelect;
+    };
+    struct SelectSB {
+        size_t index;
+        std::vector<size_t> sbSelect;
+    };
+
     /**
       * Get the number of one bits bit before index i
       * @param i The index to begin tracking
@@ -23,6 +32,8 @@ private:
     size_t blockLookupOnes(size_t i);
 
     size_t selectZeros(size_t i);
+
+    void buildSelectStructure(std::vector<SelectSB>& superblocks, char bit, std::string& bits, size_t numberOfBits);
 public:
     explicit Bitvector(std::string bits);
 
@@ -66,14 +77,6 @@ public:
     size_t getSize();
 
 private:
-    struct SelectBlock {
-        size_t index;
-        std::vector<size_t> blockSelect;
-    };
-    struct SelectSB {
-        size_t index;
-        std::vector<size_t> sbSelect;
-    };
     std::vector<uint64_t> bitvector;       //< Holds bits
     size_t size;                           //< Number of bits in bitvector
     size_t rankBlockSize;                  //< Size of one block
