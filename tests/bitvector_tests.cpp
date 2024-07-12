@@ -279,7 +279,21 @@ TEST(Select, SmallBitvetor) {
 /**
  * Test select where no lookup is needed
  */
-TEST(Select, BlockOnly) {}
+TEST(Select, BlockOnly) {
+    Bitvector bv(generateBitString("0", 28));
+    EXPECT_EQ(bv.select(0, 23) , 22);
+    EXPECT_EQ(bv.select(0, 2) , 1);
+    EXPECT_EQ(bv.select(0, 6) , 5);
+}
+/**
+ * Test select where superblock is a list
+ */
+TEST(Select, SuperblockList) {
+    auto bits = generateBitString("0", 100000);
+    bits += "1";
+    Bitvector bv(bits);
+    EXPECT_EQ(bv.select(1, 1) , 100000);
+}
 
 /**
 * Test select where lookup is needed but block is within 64 bit block

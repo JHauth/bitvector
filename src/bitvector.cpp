@@ -110,7 +110,8 @@ void Bitvector::buildSelectStructure(std::vector<SelectSB> &superblocks, char bi
         if (superblocks[i].index - start >= static_cast<size_t>(pow(log2(bits.size()), 4))) {
             // Store answer naively with list
             superblocks[i].sbSelect.resize(selectSBsize);
-            for (size_t k, n = 0; n < selectSBsize && start+k < superblocks[i].index; ++k) {
+            size_t n = 0;
+            for (size_t k = 0; n < selectSBsize && start+k <= superblocks[i].index; ++k) {
                 if (bits[start + k] == bit) {
                     superblocks[i].sbSelect[n] = k;
                     ++n;
@@ -222,11 +223,16 @@ size_t Bitvector::selectBits(size_t i, std::vector<SelectSB> &superblocks) {
         index = superblocks[i/selectSBsize - 1].index;
     }
 
-    size_t superBlockStart = index + 1;
+    // Early exit, Superblock is enough
+    if (i%selectSBsize == 0) return index;
+
+    size_t superBlockStart = i/selectSBsize != 0 ? superblocks[i/selectSBsize - 1].index : 0;
     size_t superblockLen = superblocks[i/selectSBsize].index - superBlockStart;
 
     if (superblockLen >= static_cast<size_t>(pow(log2(getSize()), 4))) {
-        // List
+        // Superblock is list
+        size_t bitsLeft = i - index; //< At least 1
+        index += superblocks[i/selectSBsize].sbSelect[bitsLeft-1];
     } else {
         // Superblock is divided into blocks
         size_t bitsLeft = i - index;
