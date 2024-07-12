@@ -85,6 +85,7 @@ private:
     std::vector<size_t> rankSuperblocks;   //< Superblock for rank
     std::vector<uint8_t> rankLookup;       //< Lookup table for rank blocks
     size_t selectSBsize;                   //< How many bits of one kind are in select superblock
+    size_t selectBlockSize;                //< How many bits of one kind are in select block
     std::vector<SelectSB> selectZeroSBs;     //< Select superblocks for zeros
     std::vector<SelectSB> selectOneSBs;      //< Select superblocks for ones
 };

@@ -19,7 +19,9 @@ Bitvector::Bitvector(std::string bits)
   rankSuperblockSize(rankBlockSize * rankBlockSize),
   rankSuperblocks(bits.size() / rankSuperblockSize + (bits.size() % rankSuperblockSize == 0 ? 0 : 1)),
   rankBlocks(bits.size() / rankBlockSize + (bits.size() % rankBlockSize == 0 ? 0 : 1)),
-  rankLookup(1 << (rankBlockSize-1)) { //< Needs one less bc otherwise we would just look at the block
+  rankLookup(1 << (rankBlockSize-1)),  //< Needs one less bc otherwise we would just look at the block
+  selectSBsize(std::max(log2(bits.size()) * log2(bits.size()), 1.0)),
+  selectBlockSize(static_cast<size_t>(sqrt(log2(bits.size())))) {
     // Fill bitvector uin64 from right to left
     for(size_t i = 0; i < bits.size(); i += 64) {
         uint64_t chunk = 0;
@@ -77,7 +79,6 @@ Bitvector::Bitvector(std::string bits)
         if (c == '1') ++k1;
         else if (c == '0') ++k0;
     }
-    selectSBsize = std::max(log2(bits.size()) * log2(bits.size()), 1.0);
     selectOneSBs.resize((k1 / selectSBsize) + (k1 % selectSBsize == 0 ? 0 : 1));
     selectZeroSBs.resize((k0 / selectSBsize) + (k0 % selectSBsize == 0 ? 0 : 1));
 
@@ -105,16 +106,15 @@ void Bitvector::buildSelectStructure(std::vector<SelectSB> &superblocks, char bi
 
     // Fill structure below select superblocks
     size_t start = 0;
-    index = 0;
-    count = 0;
     for (size_t i = 0; i < superblocks.size(); ++i) {
         if (superblocks[i].index - start >= static_cast<size_t>(pow(log2(bits.size()), 4))) {
             // Store answer naively with list
         } else {
             // Divide into blocks
             size_t bindex = 0;
-            auto tmp = static_cast<size_t>(sqrt(log2(bits.size())));
-            superblocks[i].sbSelect.resize((selectSBsize / tmp) + (selectSBsize % tmp == 0 ? 0 : 1));
+            superblocks[i].sbSelect.resize((selectSBsize / selectBlockSize)
+                + (selectSBsize % selectBlockSize == 0 ? 0 : 1));
+            count = 0;
 
             for (size_t k = start; k <= superblocks[i].index && count < selectSBsize; ++k) {
                 // Track ones/zeros
